@@ -252,6 +252,14 @@ class BiliFavlist:
     排序
     对收藏的视频进行各种操作
     '''
+    def sortFavlist(self):
+        url = r'https://api.bilibili.com/x/v3/fav/folder/sort'
+        favList = self.getFavlist()
+        idList = []
+        for i in favList:
+            idList.append(i['id'])
+        print(idList)
+        pass
 
 
 if __name__ == '__main__':
@@ -265,3 +273,4 @@ if __name__ == '__main__':
     #     a.delFolder(i['id'])
     # a.getFolderInfo(1607747941)
     # a.changeFolder(1607747941, intro="sbwmyxdd", cover=r"https://wx2.sinaimg.cn/mw2000/005CgOGzly1h1yvun4oklj32jo1bmkjl.jpg")
+    a.sortFavlist()
