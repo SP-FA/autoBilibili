@@ -276,7 +276,7 @@ class BiliFavlist:
             print(fe)
             return
         if index == 0:
-            raise FavlistException(0, "index can not be 0")
+            raise FavlistException(0, "index can not be 0, it must at least 1")
 
         url = r'https://api.bilibili.com/x/v3/fav/folder/sort'
         favList = self.getFavlist()
@@ -288,7 +288,7 @@ class BiliFavlist:
             idList.insert(index, mediaId)
         except IndexError as ie:
             idList.append(mediaId)
-            print("Index out of range, ")
+            print("Index out of range, it will be moved to the bottom of the list")
 
         idstr = ""
         for i in idList:
