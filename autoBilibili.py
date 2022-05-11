@@ -2,6 +2,7 @@ import requests
 import json
 import http.cookiejar as cookielib
 import re
+from typing import *
 
 
 class CookieException(Exception):
@@ -28,10 +29,11 @@ class FavlistException(Exception):
         0: The parameters are invalid
         1: Runtime Failures while creating folder
         2: Runtime Failures while deleting folder
-        3: Runtime Failures while getting folders
+        3: Runtime Failures while getting favlist
         4: Can not find the folder
         5: Runtime Failures while getting the info of folder
         6: Runtime Failures while changing the info of folder
+        7: Runtime Failures while moving folders
     '''
     def __init__(self, err, msg):
         self.errno = err
@@ -42,11 +44,11 @@ class FavlistException(Exception):
 
 
 class BiliFavlist:
-    def __init__(self, uid:str):
-        self.uid = uid;
+    def __init__(self, uid:int):
+        self.uid = str(uid);
         self.session = requests.session()
         # You need to configure these cookies by yourself.
-        self.session.cookies['DedeUserID'] = uid
+        self.session.cookies['DedeUserID'] = self.uid
         self.session.cookies['DedeUserID__ckMd5'] = 'af579018a1a2b69b'
         self.session.cookies['SESSDATA'] = 'f658d72a%2C1660183655%2C20c26%2A21'
         self.session.cookies['bili_jct'] = '70e8a10f9998293cdb639fa52bacf3ab'
@@ -97,7 +99,7 @@ class BiliFavlist:
         return favList
 
 
-    def printFavlist(self, favList):
+    def printFavlist(self, favList:List[Dict]):
         '''
         Print the list of favorite folders
         '''
@@ -106,7 +108,7 @@ class BiliFavlist:
             print('%s\t%10s\t%8s\t%s\t%s' % (k, i['id'], i['fid'], i['title'], i['media_count']))
 
 
-    def checkFolder(self, mediaId):
+    def checkFolder(self, mediaId:int):
         '''
         Check whether the folder is exist
 
@@ -174,6 +176,7 @@ class BiliFavlist:
         except FavlistException as fe:
             print(fe)
             return
+
         url = r'https://api.bilibili.com/x/v3/fav/folder/del'
         data = {
             "media_ids": mediaId,
@@ -205,6 +208,7 @@ class BiliFavlist:
         except FavlistException as fe:
             print(fe)
             return
+
         url = r'https://api.bilibili.com/x/v3/fav/folder/edit'
         raw_data = self.getFolderInfo(mediaId)
         data = {
@@ -221,7 +225,7 @@ class BiliFavlist:
         print("The information has changed successfully.")
 
 
-    def getFolderInfo(self, mediaId:int) -> json:
+    def getFolderInfo(self, mediaId:int) -> Dict:
         '''
         get folders' info
 
@@ -240,30 +244,74 @@ class BiliFavlist:
         except FavlistException as fe:
             print(fe)
             return
+            
         url = 'https://api.bilibili.com/x/v3/fav/resource/list?media_id=%s&pn=1&ps=20&keyword=&order=mtime&type=0&tid=0&platform=web&jsonp=jsonp' % mediaId
         check = self.session.get(url, headers=self.headers).json()
         if check['code'] != 0:
             raise FavlistException(5, check['message'])
-        return check['data']['info']
+        keys = ['id', 'fid', 'title', 'cover', 'cnt_info', 'intro', 'media_count']
+        check = check['data']['info']
+        info = {}
+        for i in keys:
+            info[i] = check[i]
+        return info
+
+
+    def moveFolder2(self, mediaId:int, index:int):
+        '''
+        Move a folder to index, index = 0 is the default favorites folder,
+        so index must at least 1 in this method.
+
+        PARAMETER:
+          @ mediaId: 
+          @ index:
+
+        EXCEPTION:
+          FavlistException:
+          @ errno 7: Runtime Failures while moving folders
+        '''
+        try:
+            self.checkFolder(mediaId)
+        except FavlistException as fe:
+            print(fe)
+            return
+        if index == 0:
+            raise FavlistException(0, "index can not be 0")
+
+        url = r'https://api.bilibili.com/x/v3/fav/folder/sort'
+        favList = self.getFavlist()
+        idList = []
+        for k, i in enumerate(favList):
+            idList.append(i['id'])
+        idList.remove(mediaId)
+        try:
+            idList.insert(index, mediaId)
+        except IndexError as ie:
+            idList.append(mediaId)
+            print("Index out of range, ")
+
+        idstr = ""
+        for i in idList:
+            idstr += str(i) + ","
+        data = {
+            "sort": idstr,
+            "jsonp": "jsonp",
+            "csrf": "70e8a10f9998293cdb639fa52bacf3ab",
+        }
+        check = self.session.post(url, headers=self.headers, data=data).json()
+        if check['code'] != 0:
+            raise FavlistException(7, check['message'])
+        print('The folder has been moved successfully.')
 
 
     '''
     todo:
-    排序
     对收藏的视频进行各种操作
     '''
-    def sortFavlist(self):
-        url = r'https://api.bilibili.com/x/v3/fav/folder/sort'
-        favList = self.getFavlist()
-        idList = []
-        for i in favList:
-            idList.append(i['id'])
-        print(idList)
-        pass
 
 
 if __name__ == '__main__':
-    a = BiliFavlist('277470241')
+    a = BiliFavlist(277470241)
     # a.verifyCookie()
     # a.addFolder('lxymyxdd', 'this is a test message')
     # L = a.getFavlist()
@@ -271,6 +319,6 @@ if __name__ == '__main__':
     # L = L[1 : 10]
     # for i in L:
     #     a.delFolder(i['id'])
-    # a.getFolderInfo(1607747941)
+    # print(a.getFolderInfo(1328013241))
     # a.changeFolder(1607747941, intro="sbwmyxdd", cover=r"https://wx2.sinaimg.cn/mw2000/005CgOGzly1h1yvun4oklj32jo1bmkjl.jpg")
-    a.sortFavlist()
+    # a.moveFolder2(1328013241, 2)
