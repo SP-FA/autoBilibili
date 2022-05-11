@@ -44,8 +44,8 @@ class FavlistException(Exception):
 
 
 class BiliFavlist:
-    def __init__(self, uid:int):
-        self.uid = str(uid);
+    def __init__(self): # uid:int
+        self.uid = str(277470241)# str(uid);
         self.session = requests.session()
         # You need to configure these cookies by yourself.
         self.session.cookies['DedeUserID'] = self.uid
@@ -69,7 +69,8 @@ class BiliFavlist:
           @ errno 0: invalid Cookie
           @ errno 1: Cookies are not configured in the init method correctly
         '''
-        homePage = self.session.get('https://space.bilibili.com/%s/favlist' % self.uid, headers=self.headers)
+        url = 'https://space.bilibili.com/%s/favlist' % self.uid
+        homePage = self.session.get(url, headers=self.headers)
         if (self.session.cookies['DedeUserID'] == '' or self.session.cookies['DedeUserID__ckMd5'] == ''):
             raise CookieException(0, 'Please configure the Cookie in the init method')
         else:
@@ -92,7 +93,7 @@ class BiliFavlist:
           @ errno 3: Runtime Failures while getting folders
         '''
         url = r'https://api.bilibili.com/x/v3/fav/folder/created/list-all?up_mid=' + self.uid
-        check = self.session.get(url).json()
+        check = self.session.get(url, headers=self.headers).json()
         if check['code'] != 0:
             raise FavlistException(3, check['message'])
         favList = check['data']['list']
@@ -263,8 +264,8 @@ class BiliFavlist:
         so index must at least 1 in this method.
 
         PARAMETER:
-          @ mediaId: 
-          @ index:
+          @ mediaId: the folder id you want to move.
+          @ index: the index you want to move to.
 
         EXCEPTION:
           FavlistException:
@@ -311,8 +312,8 @@ class BiliFavlist:
 
 
 if __name__ == '__main__':
-    a = BiliFavlist(277470241)
-    # a.verifyCookie()
+    a = BiliFavlist() # 277470241
+    a.verifyCookie()
     # a.addFolder('lxymyxdd', 'this is a test message')
     # L = a.getFavlist()
     # a.printFavlist(L)
