@@ -1,7 +1,7 @@
-[toc]
-
 # autoBilibili
- 辅助自动化管理 bilibili
+使用 python 构建一个辅助自动化管理 bilibili 的 package。
+
+
 
 ## 自动登陆 Bilibili
 首先需要获取账户的 Cookie，填入 `__init__` 方法中，此功能目前还在完善。
@@ -43,6 +43,36 @@ bili.addFolder("folder name", "folder intro", 0)
 - `favList`：获取到的收藏夹列表，是一个 list，元素是 dict 包含了每个收藏夹的信息
 
 e.g.
+
+<html>
+<style>
+    .mac {
+        width:10px;
+        height:10px;
+        border-radius:5px;
+        float:left;
+        margin:10px 0 0 5px;
+    }
+    .b1 {
+        background:#E0443E;
+        margin-left: 10px;
+    }
+    .b2 { background:#DEA123; }
+    .b3 { background:#1AAB29; }
+    .warpper{
+        background:#121212;
+        border-radius:5px;
+        width:400px;
+    }
+</style>
+<div class="warpper">
+    <div class="mac b1"></div>
+    <div class="mac b2"></div>
+    <div class="mac b3"></div>
+<div>
+<br>
+</html>
+
 ```python
 lst = bili.getFavlist()
 bili.printFavlist(lst)
