@@ -13,6 +13,7 @@ bili.verifyCookie()
 
 ## 新建收藏夹
 **函数声明：**
+
 `addFolder(self, name:str="", intro:str="", privacy:int=0, cover:str="")`
  
 参数：
@@ -29,11 +30,15 @@ bili.addFolder("folder name", "folder intro", 0)
 
 ## 获取收藏夹列表 & 打印
 **函数声明：**
+
 `getFavlist(self) -> List[Dict]`
+
 返回值：
+
 一个 list，元素是 dict，包含了每个收藏夹的信息。
 
 `printFavlist(self, favList:List[Dict])`
+
 参数：
 - `favList`：获取到的收藏夹列表，是一个 list，元素是 dict 包含了每个收藏夹的信息
 
@@ -46,6 +51,7 @@ bili.printFavlist(lst)
 
 ## 删除收藏夹
 **函数声明：**
+
 `delFolder(self, mediaId:int)`
 
 参数：
@@ -62,7 +68,9 @@ for i in lst:
 
 ## 获取收藏夹信息 & 修改信息
 **函数声明：**
+
 `getFolderInfo(self, mediaId:int) -> Dict`
+
 参数：
 - `mediaId`：收藏夹 id
 
@@ -70,6 +78,7 @@ for i in lst:
 一个字典，包含了该收藏夹的详细信息
 
 `changeFolder(self, mediaId:int, title:str=None, intro:str=None, cover:str=None)`
+
 参数：
 - `mediaId`：要修改信息的收藏夹 id
 - `title`：修改后的收藏夹名。为空则表示不修改，下同。
@@ -88,7 +97,9 @@ print(bili.getFolderInfo(i['id']))
 
 ## 移动收藏夹
 **函数声明：**
+
 `moveFolder2(self, mediaId:int, index:int)`
+
 参数：
 - `mediaId`：要移动的收藏夹 id
 - `index`：要移动到的位置。注意，这里的位置要从 1 开始，因为 0 是默认收藏夹，且列表要去掉要移动的收藏夹，也就是说，如果有 n 个收藏夹，那么 index 的取值范围是 [1, n)
