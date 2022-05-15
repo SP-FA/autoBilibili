@@ -4,7 +4,7 @@ import http.cookiejar as cookielib
 import re
 from typing import *
 
-
+ 
 class CookieException(Exception):
     '''
     ATTRIBUTE:
