@@ -7,6 +7,9 @@
 首先需要获取账户的 Cookie，填入 `__init__` 方法中，此功能目前还在完善。
 
 可通过如下代码验证 Cookie 是否配置正确
+
+[](https://carbon.now.sh/?bg=rgba%28250%2C252%2C252%2C0%29&t=monokai&wt=none&l=python&width=680&ds=true&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=56px&ph=56px&ln=false&fl=1&fm=Hack&fs=10px&lh=133%25&si=false&es=1x&wm=false&code=bili%2520%253D%2520BiliFavlist%28%29%250Abili.verifyCookie%28%29)
+
 ```python
 bili = BiliFavlist()
 bili.verifyCookie()
@@ -43,36 +46,6 @@ bili.addFolder("folder name", "folder intro", 0)
 - `favList`：获取到的收藏夹列表，是一个 list，元素是 dict 包含了每个收藏夹的信息
 
 e.g.
-
-<html>
-<style>
-    .mac {
-        width:10px;
-        height:10px;
-        border-radius:5px;
-        float:left;
-        margin:10px 0 0 5px;
-    }
-    .b1 {
-        background:#E0443E;
-        margin-left: 10px;
-    }
-    .b2 { background:#DEA123; }
-    .b3 { background:#1AAB29; }
-    .warpper{
-        background:#121212;
-        border-radius:5px;
-        width:400px;
-    }
-</style>
-<div class="warpper">
-    <div class="mac b1"></div>
-    <div class="mac b2"></div>
-    <div class="mac b3"></div>
-<div>
-<br>
-</html>
-
 ```python
 lst = bili.getFavlist()
 bili.printFavlist(lst)
