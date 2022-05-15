@@ -18,7 +18,7 @@ bili.verifyCookie()
 ## 新建收藏夹
 **函数声明：**
 `addFolder(self, name:str="", intro:str="", privacy:int=0, cover:str="")`
-
+ 
 参数：
 - `name`：收藏夹的名字，不能为空
 - `intro`：收藏夹简介
