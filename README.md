@@ -9,11 +9,7 @@
 bili = BiliFavlist()
 bili.verifyCookie()
 ```
->如果配置完善，则程序会打印 "Valid Cookie, user name: + 用户名"
->可能会引发的异常：
->   CookieException 错误代码如下
->       0：没有配置 Cookie
->       1：Cookie 不正确
+如果配置完善，则程序会打印 "Valid Cookie, user name: + 用户名"
 
 ## 新建收藏夹
 **函数声明：**
@@ -29,10 +25,6 @@ e.g.
 ```python
 bili.addFolder("folder name", "folder intro", 0)
 ```
-> 可能会引发的异常：
->   FavlistException 错误代码如下
->       0：参数错误
->       1：收藏夹创建失败
 
 
 ## 获取收藏夹列表 & 打印
@@ -50,9 +42,6 @@ e.g.
 lst = bili.getFavlist()
 bili.printFavlist(lst)
 ```
-> 可能会引发的异常：
-> FavlistException 错误代码如下
->       3：获取列表失败
 
 
 ## 删除收藏夹
@@ -69,11 +58,6 @@ lst = lst[1:] // 去掉默认收藏夹
 for i in lst:
     bili.delFolder(i['id']) // 删除所有收藏夹
 ```
-> 可能会引发的异常：
->   FavlistException 错误代码如下
->       0：参数错误
->       2：删除收藏夹失败
->       4：无法找到该收藏夹
 
 
 ## 获取收藏夹信息 & 修改信息
@@ -100,10 +84,7 @@ print(bili.getFolderInfo(i['id']))
 bili.changeFolder(i['id'], 'changedTitle', 'Test changing info')
 print(bili.getFolderInfo(i['id']))
 ```
->可能会引发的异常：
->   FavlistException
->       4：无法找到该收藏夹
->       5：获取收藏夹信息时出错
+
 
 ## 移动收藏夹
 **函数声明：**
@@ -120,10 +101,20 @@ bili.printFavlist(lst)
 bili.moveFolder2(i['id'], 2)
 bili.printFavlist(bili.getFavlist())
 ```
->可能会引发的异常：
->   FavlistException
->       4：无法找到收藏夹
->       7：移动收藏夹时出错
+
+可能会引发的异常：
+- CookieException
+    - 0：没有配置 Cookie
+    - 1：Cookie 不正确
+- FavlistException
+    - 0：参数错误
+    - 1：收藏夹创建失败
+    - 2：删除收藏夹失败
+    - 3：获取列表失败
+    - 4：无法找到收藏夹
+    - 5：获取收藏夹信息时出错
+    - 6：修改收藏夹信息失败
+    - 7：移动收藏夹时出错
 
 to do：
 1. 收藏夹排序
