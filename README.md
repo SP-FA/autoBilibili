@@ -104,7 +104,6 @@ print(bili.getFolderInfo(i['id']))
 >   FavlistException
 >       4：无法找到该收藏夹
 >       5：获取收藏夹信息时出错
->       
 
 ## 移动收藏夹
 **函数声明：**
