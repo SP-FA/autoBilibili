@@ -44,8 +44,8 @@ class FavlistException(Exception):
 
 
 class BiliFavlist:
-    def __init__(self): # uid:int
-        self.uid = str(277470241)# str(uid);
+    def __init__(self, uid): # uid:int
+        self.uid = str(uid);
         self.session = requests.session()
         # You need to configure these cookies by yourself.
         self.session.cookies['DedeUserID'] = self.uid
@@ -298,7 +298,7 @@ class BiliFavlist:
 
 
 if __name__ == '__main__':
-    a = BiliFavlist() # 277470241
+    a = BiliFavlist(277470241) # 277470241
     a.verifyCookie()
     # a.addFolder('lxymyxdd', 'this is a test message')
     # L = a.getFavlist()

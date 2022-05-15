@@ -1,20 +1,19 @@
 # autoBilibili
 使用 python 构建一个辅助自动化管理 bilibili 的 package。
 
-
+![example](./src/example.png)
 
 ## 自动登陆 Bilibili
 首先需要获取账户的 Cookie，填入 `__init__` 方法中，此功能目前还在完善。
 
 可通过如下代码验证 Cookie 是否配置正确
 
-[](https://carbon.now.sh/?bg=rgba%28250%2C252%2C252%2C0%29&t=monokai&wt=none&l=python&width=680&ds=true&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=56px&ph=56px&ln=false&fl=1&fm=Hack&fs=10px&lh=133%25&si=false&es=1x&wm=false&code=bili%2520%253D%2520BiliFavlist%28%29%250Abili.verifyCookie%28%29)
-
 ```python
 bili = BiliFavlist()
 bili.verifyCookie()
 ```
 如果配置完善，则程序会打印 "Valid Cookie, user name: + 用户名"
+
 
 ## 新建收藏夹
 **函数声明：**
