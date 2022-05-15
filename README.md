@@ -1,3 +1,5 @@
+[toc]
+
 # autoBilibili
  辅助自动化管理 bilibili
 
@@ -33,9 +35,7 @@ bili.addFolder("folder name", "folder intro", 0)
 
 `getFavlist(self) -> List[Dict]`
 
-返回值：
-
-一个 list，元素是 dict，包含了每个收藏夹的信息。
+返回值：一个 list，元素是 dict，包含了每个收藏夹的信息。
 
 `printFavlist(self, favList:List[Dict])`
 
@@ -74,8 +74,7 @@ for i in lst:
 参数：
 - `mediaId`：收藏夹 id
 
-返回值：
-一个字典，包含了该收藏夹的详细信息
+返回值：一个字典，包含了该收藏夹的详细信息
 
 `changeFolder(self, mediaId:int, title:str=None, intro:str=None, cover:str=None)`
 
@@ -126,6 +125,8 @@ bili.printFavlist(bili.getFavlist())
     - 5：获取收藏夹信息时出错
     - 6：修改收藏夹信息失败
     - 7：移动收藏夹时出错
+
+---
 
 to do：
 1. 收藏夹排序
