@@ -298,7 +298,7 @@ class BiliFavlist:
 
 
 if __name__ == '__main__':
-    a = BiliFavlist(277470241) # 277470241
+    a = BiliFavlist() #
     a.verifyCookie()
     # a.addFolder('lxymyxdd', 'this is a test message')
     # L = a.getFavlist()
