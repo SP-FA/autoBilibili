@@ -3,6 +3,7 @@ import json
 import http.cookiejar as cookielib
 import re
 from typing import *
+from json import JSONDecodeError
 
  
 class CookieException(Exception):
@@ -10,7 +11,7 @@ class CookieException(Exception):
     ATTRIBUTE:
       @ msg: The error message
       @ errno: The error code
-        0: Cookies are not configured in the init method
+        0: Cookies are not configured in the json file
         1: invalid Cookie
     '''
     def __init__(self, err, msg):
@@ -18,7 +19,7 @@ class CookieException(Exception):
         self.msg = msg
 
     def __str__(self):
-        return "[Cookie error: %s] %s" % self.errno, self.msg
+        return "[Cookie error: %s] %s" % (self.errno, self.msg)
 
 
 class FavlistException(Exception):
@@ -44,15 +45,20 @@ class FavlistException(Exception):
 
 
 class BiliFavlist:
-    def __init__(self, uid): # uid:int
-        self.uid = str(uid);
-        self.session = requests.session()
-        # You need to configure these cookies by yourself.
-        self.session.cookies['DedeUserID'] = self.uid
-        self.session.cookies['DedeUserID__ckMd5'] = 'af579018a1a2b69b'
-        self.session.cookies['SESSDATA'] = 'f658d72a%2C1660183655%2C20c26%2A21'
-        self.session.cookies['bili_jct'] = '70e8a10f9998293cdb639fa52bacf3ab'
-        self.session.cookies['LIVE_BUVID'] = 'AUTO8916133928311387'
+    def __init__(self, path:str):
+        try:
+            with open(path) as f:
+                cookie = json.load(f)
+
+            self.uid = cookie['uid'];
+            self.session = requests.session()
+            self.session.cookies['DedeUserID'] = self.uid
+            self.session.cookies['DedeUserID__ckMd5'] = cookie['ckMd5']
+            self.session.cookies['SESSDATA'] = cookie['SESSDATA']
+            self.session.cookies['bili_jct'] = cookie['bili_jct']
+            self.session.cookies['LIVE_BUVID'] = cookie['LIVE_BUVID']
+        except (KeyError, JSONDecodeError):
+            raise CookieException(0, 'Cookies are not configured in ' + path)
 
         self.headers = {
             'origin': 'https://space.bilibili.com',
@@ -71,14 +77,11 @@ class BiliFavlist:
         '''
         url = 'https://space.bilibili.com/%s/favlist' % self.uid
         homePage = self.session.get(url, headers=self.headers)
-        if (self.session.cookies['DedeUserID'] == '' or self.session.cookies['DedeUserID__ckMd5'] == ''):
-            raise CookieException(0, 'Please configure the Cookie in the init method')
-        else:
-            home_page = homePage.content.decode("utf-8")
-            if ('个人空间_哔哩哔哩_Bilibili' not in home_page):
-                raise CookieException(1, 'Invalid Cookie.')
-            user_name = re.findall(r'<meta name="keywords" content="(.*),B站', home_page)[0]
-            print('Valid Cookie, user name: %s' % user_name)
+        home_page = homePage.content.decode("utf-8")
+        if ('个人空间_哔哩哔哩_Bilibili' not in home_page):
+            raise CookieException(1, 'Invalid Cookie.')
+        user_name = re.findall(r'<meta name="keywords" content="(.*),B站', home_page)[0]
+        print('Valid Cookie, user name: %s' % user_name)
 
 
     def getFavlist(self) -> List[Dict]:
@@ -292,13 +295,14 @@ class BiliFavlist:
 
     '''
     todo:
+    获取cookie
     收藏夹排序
     对收藏的视频进行各种操作
     '''
 
 
 if __name__ == '__main__':
-    a = BiliFavlist() #
+    a = BiliFavlist("cookies.json") #
     a.verifyCookie()
     # a.addFolder('lxymyxdd', 'this is a test message')
     # L = a.getFavlist()
