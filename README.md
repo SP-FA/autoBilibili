@@ -1,10 +1,10 @@
-![poster](./src/poster.png)
+![poster](./img/poster.png)
 
 # autoBilibili
 使用 python 构建一个辅助自动化管理 bilibili 的 package。
 
 部分内容展示：
-![example](./src/example.png)
+![example](./img/example.png)
 
 ## 自动登陆 Bilibili
 首先需要获取账户的 Cookie，填入 `__init__` 方法中，此功能目前还在完善。
