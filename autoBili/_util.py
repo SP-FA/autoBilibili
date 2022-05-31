@@ -1,6 +1,9 @@
+import requests
 from json import JSONDecodeError
+import json
 from typing import *
 import re
+from _exception import CookieException
 
 
 class UtilAcount:
@@ -44,5 +47,5 @@ class UtilAcount:
 
 
 if __name__ == "__main__":
-    test = UtilAcount("cookies.json")
+    test = UtilAcount("../cookies.json")
     test.verifyCookie()

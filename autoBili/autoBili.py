@@ -1,47 +1,9 @@
-import requests
 import json
-import http.cookiejar as cookielib
 import re
 from typing import *
-from util import UtilAcount
-
- 
-class CookieException(Exception):
-    '''
-    ATTRIBUTE:
-      @ msg: The error message
-      @ errno: The error code
-        0: Cookies are not configured in the json file
-        1: invalid Cookie
-    '''
-    def __init__(self, err, msg):
-        self.errno = err
-        self.msg = msg
-
-    def __str__(self):
-        return "[Cookie error: %s] %s" % (self.errno, self.msg)
-
-
-class FavlistException(Exception):
-    '''
-    ATTRIBUTE:
-      @ msg: The error message
-      @ errno: The error code
-        0: The parameters are invalid
-        1: Runtime Failures while creating folder
-        2: Runtime Failures while deleting folder
-        3: Runtime Failures while getting favlist
-        4: Can not find the folder
-        5: Runtime Failures while getting the info of folder
-        6: Runtime Failures while changing the info of folder
-        7: Runtime Failures while moving folders
-    '''
-    def __init__(self, err, msg):
-        self.errno = err
-        self.msg = msg
-
-    def __str__(self):
-        return "[favlist error: %s] %s" % (self.errno, self.msg)
+from _util import UtilAcount
+from _exception import FavlistException
+from _validation import _checkType, _checkIsIn
 
 
 class BiliFavlist(UtilAcount):
@@ -76,9 +38,9 @@ class BiliFavlist(UtilAcount):
         PARAMETER:
           @ favList: folder list, and the element is the dict of the info of each folder.
         '''
-        print("\tid\t\tfid\t\ttitle\t\tmedia_count")
+        print("\tid\t\tfid\t\ttitle")
         for k, i in enumerate(favList):
-            print('%s\t%10s\t%8s\t%s\t%s' % (k, i['id'], i['fid'], i['title'], i['media_count']))
+            print('%s\t%10s\t%8s\t%s' % (k, i['id'], i['fid'], i['title']))
 
 
     def checkFolder(self, mediaId:int):
@@ -92,6 +54,7 @@ class BiliFavlist(UtilAcount):
           FavlistException:
           @ errno 4: Can not find the folder
         '''
+        _checkType(mediaId, int)
         mediaList = self.getFavlist()
         for i in mediaList:
             if i['id'] == mediaId:
@@ -114,6 +77,10 @@ class BiliFavlist(UtilAcount):
           @ errno 0: The parameters are invalid
           @ errno 1: Runtime Failures while creating folder
         '''
+        _checkType(name, str)
+        _checkType(intro, str)
+        _checkType(cover, str)
+        _checkIsIn(intro, str, "intro", [0, 1])
         if name == "":
             raise FavlistException(0, 'A folder name is needed.')
         if privacy != 0 and privacy != 1:
@@ -124,7 +91,7 @@ class BiliFavlist(UtilAcount):
             'intro': intro,
             'privacy': privacy,
             'cover': cover,
-            'csrf': '70e8a10f9998293cdb639fa52bacf3ab',
+            'csrf': self.session.cookies['bili_jct'],
         }
         check = self.session.post(url, headers=self.headers, data=data).json()
         if check['code'] != 0: # code = 0 运行成功
@@ -144,13 +111,14 @@ class BiliFavlist(UtilAcount):
           @ errno 2: Runtime Failures while deleting folder
           @ errno 4: Can not find the folder
         '''
+        _checkType(mediaId, int)
         self.checkFolder(mediaId)
         url = r'https://api.bilibili.com/x/v3/fav/folder/del'
         data = {
             "media_ids": mediaId,
             "platform": "web",
             "jsonp": "jsonp",
-            "csrf": "70e8a10f9998293cdb639fa52bacf3ab",
+            "csrf": self.session.cookies['bili_jct'],
         }
         check = self.session.post(url, headers=self.headers, data=data).json()
         if check['code'] != 0:
@@ -172,11 +140,15 @@ class BiliFavlist(UtilAcount):
           @ errno 5: Runtime Failures while getting the info of the folder
           @ errno 6: Runtime Failures while changing the info of folder
         '''
+        _checkType(mediaId, int)
+        _checkType(title, str)
+        _checkType(intro, str)
+        _checkType(cover, str)
         raw_data = self.getFolderInfo(mediaId)
         url = r'https://api.bilibili.com/x/v3/fav/folder/edit'
         data = {
             "privacy": 0,
-            "csrf": "70e8a10f9998293cdb639fa52bacf3ab",
+            "csrf": self.session.cookies['bili_jct'],
             "media_id": mediaId,
         }
         data['title'] = raw_data['title'] if title == None else title
@@ -202,6 +174,7 @@ class BiliFavlist(UtilAcount):
           @ errno 4: Can not find the folder
           @ errno 5: Runtime Failures while getting the info of the folder
         '''
+        _checkType(mediaId, int)
         self.checkFolder(mediaId)    
         url = 'https://api.bilibili.com/x/v3/fav/resource/list?media_id=%s&pn=1&ps=20&keyword=&order=mtime&type=0&tid=0&platform=web&jsonp=jsonp' % mediaId
         check = self.session.get(url, headers=self.headers).json()
@@ -229,12 +202,14 @@ class BiliFavlist(UtilAcount):
           @ errno 4: Can not find the folder
           @ errno 7: Runtime Failures while moving folders
         '''
+        _checkType(mediaId, int)
         self.checkFolder(mediaId)
+        favList = self.getFavlist()
+        _checkType(index, int, "index", [1, favList.size()-1])
         if index == 0:
             raise FavlistException(0, "index can not be 0, it must at least 1")
 
         url = r'https://api.bilibili.com/x/v3/fav/folder/sort'
-        favList = self.getFavlist()
         idList = []
         for i in favList:
             idList.append(i['id'])
@@ -251,7 +226,7 @@ class BiliFavlist(UtilAcount):
         data = {
             "sort": idstr,
             "jsonp": "jsonp",
-            "csrf": "70e8a10f9998293cdb639fa52bacf3ab",
+            "csrf": self.session.cookies['bili_jct'],
         }
         check = self.session.post(url, headers=self.headers, data=data).json()
         if check['code'] != 0:
@@ -260,7 +235,6 @@ class BiliFavlist(UtilAcount):
 
     '''
     todo:
-    数据验证
     获取cookie
     收藏夹排序
     对收藏的视频进行各种操作
@@ -268,7 +242,7 @@ class BiliFavlist(UtilAcount):
 
 
 if __name__ == '__main__':
-    a = BiliFavlist("cookies.json") #
+    a = BiliFavlist("../cookies.json")
     a.verifyCookie()
     # a.addFolder('lxymyxdd', 'this is a test message')
     # L = a.getFavlist()
