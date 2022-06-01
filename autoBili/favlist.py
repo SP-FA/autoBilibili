@@ -12,7 +12,7 @@ class BiliFavlist(UtilAcount):
 
 
     def getFavlist(self) -> List[Dict]:
-        '''
+        ''' 
         Get the favorite folder
 
         RETURN:
@@ -28,7 +28,6 @@ class BiliFavlist(UtilAcount):
             raise FavlistException(3, check['message'])
         favList = check['data']['list']
         return favList
-
 
 
     def printFavlist(self, favList:List[Dict]):
@@ -238,6 +237,7 @@ class BiliFavlist(UtilAcount):
     获取cookie
     收藏夹排序
     对收藏的视频进行各种操作
+    win 通知
     '''
 
 
