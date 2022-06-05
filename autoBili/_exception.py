@@ -34,3 +34,19 @@ class FavlistException(Exception):
 
     def __str__(self):
         return "[favlist error: %s] %s" % (self.errno, self.msg)
+
+
+class FolistException(Exception):
+    '''
+    ATTRIBUTE:
+      @ msg: The error message
+      @ errno: The error code
+        0: The parameters are invalid
+        1: Runtime Failures while getting follow list
+    '''
+    def __init__(self, err, msg):
+        self.errno = err
+        self.msg = msg
+
+    def __str__(self):
+        return "[follow list error: %s] %s" % (self.errno, self.msg)

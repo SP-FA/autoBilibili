@@ -8,12 +8,16 @@ from _validation import _checkType, _checkIsIn
 
 class BiliFavlist(UtilAcount):
     def __init__(self, path:str):
+        '''
+        PARAMETER:
+          @ path: the path of the cookies.json file.
+        '''
         super().__init__(path)
 
 
     def getFavlist(self) -> List[Dict]:
         ''' 
-        Get the favorite folder
+        Get the favorite folder list.
 
         RETURN:
           a list of json data, which include the info of the favorite list
