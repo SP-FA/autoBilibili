@@ -4,6 +4,7 @@
 使用 python 构建一个辅助自动化管理 bilibili 的 package。
 
 部分内容展示：
+
 ![example](./img/example.png)
 
 ## 自动登陆 Bilibili
