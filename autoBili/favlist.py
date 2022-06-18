@@ -13,6 +13,7 @@ class BiliFavlist(UtilAcount):
           @ path: the path of the cookies.json file.
         '''
         super().__init__(path)
+        self.favList = None
 
 
     def getFavlist(self) -> List[Dict]:
@@ -30,19 +31,29 @@ class BiliFavlist(UtilAcount):
         check = self.session.get(url, headers=self.headers).json()
         if check['code'] != 0:
             raise FavlistException(3, check['message'])
-        favList = check['data']['list']
-        return favList
+        self.favList = check['data']['list']
+        return self.favList
 
 
     def printFavlist(self, favList:List[Dict]):
         '''
-        Print the list of favorite folders
+        Print the list of favorite folders. If the parameter favList is None,
+        this method will use self.favList. if self.favList is None, it will
+        call self.getFavlist()
 
         PARAMETER:
           @ favList: folder list, and the element is the dict of the info of each folder.
         '''
-        print("\tid\t\tfid\t\ttitle")
-        for k, i in enumerate(favList):
+        if favList != None:
+            printLst = favList
+        elif self.favList != None:
+            printLst = self.favList
+        else:
+            printLst = self.getFavlist()
+
+
+        print("\tNo.\t\tfid\t\ttitle")
+        for k, i in enumerate(printLst):
             print('%s\t%10s\t%8s\t%s' % (k, i['id'], i['fid'], i['title']))
 
 

@@ -11,6 +11,7 @@ class BiliFolist(UtilAcount):
           @ path: the path of the cookies.json file.
         '''
         super().__init__(path)
+        self.folist = None
 
 
     def getFolist(self, tagid:int=None, pn:int=10, ps:int=50) -> List[Dict]:
@@ -30,8 +31,7 @@ class BiliFolist(UtilAcount):
           FolistException:
             @ errno 1: Runtime Failures while getting follow list
         '''
-        total = 0
-        folist = []
+        self.folist = []
         for i in range(1, pn+1):
             if tagid == None:
                 url = 'https://api.bilibili.com/x/relation/followings?vmid=%s&pn=%d&ps=%d&order=desc&order_type=attention' % (self.uid, i, ps)
@@ -43,27 +43,113 @@ class BiliFolist(UtilAcount):
             if check['code'] != 0:
                 raise FolistException(1, check['message'])
             if tagid == None:
-                folist += check['data']['list']
+                self.folist += check['data']['list']
             else:
-                folist += check['data']
-        return folist
+                self.folist += check['data']
+        return self.folist
 
 
-    def printFolist(self, folist:List[Dict]):
+    def printFolist(self, folist:List[Dict]=None):
         '''
-        print the list of followed ups.
+        print the list of followed ups. If the parameter folist is None,
+        this method will use self.folist. if self.folist is None, it will
+        call self.getFolist()
 
         PARAMETER:
           @ folist: the list contains the info of followed ups.
         '''
-        print("total number: %d" % len(folist))
+        if folist != None:
+            printLst = folist
+        elif self.folist != None:
+            printLst = self.folist
+        else:
+            printLst = self.getFolist()
+
+        print("total number: %d" % len(printLst))
         print("No.\t       uid\tName")
-        for k, i in enumerate(folist):
+        for k, i in enumerate(printLst):
             print('%s\t%10s\t%s' % (k, i['mid'], i['uname']))
 
 
+class BiliFoGroup(UtilAcount):
+    def __init__(self, path:str):
+        '''
+        PARAMETER:
+          @ path: the path of the cookies.json file.
+        '''
+        super().__init__(path)
+        self.glst = None
+
+
+    def getGroups(self) -> List[Dict]:
+        '''
+        RETURN:
+          a list of json data, which include the info of the follow groups
+
+        EXCEPTION:
+          @ errno 5: Runtime Failures while getting follow group
+        '''
+        url = "https://api.bilibili.com/x/relation/tags" # ?jsonp=jsonp&callback=__jp3
+        check = self.session.get(url, headers=self.headers).json()
+        if check['code'] != 0:
+            raise FolistException(5, check['message'])
+        self.glst = check['data']
+        return self.glst
+
+
+    def printGroup(self, glst:List[Dict]=None):
+        '''
+        print the groups of followed ups. If the parameter glst is None,
+        this method will use self.glst. if self.glst is None, it will
+        call self.getGroups()
+
+        PARAMETER:
+          @ folist: the list contains the info of followed ups.
+        '''
+        if glst != None:
+            printLst = glst
+        elif self.glst != None:
+            printLst = self.glst
+        else:
+            printLst = self.getGroups()
+
+        print("tagid\t\tname\t\tcount")
+        for i in printLst:
+            print("%d\t%12s\t\t%5s" % (i['tagid'], i['name'], i['count']))
+
+
+    def createGroup(self, name:str):
+        url = "https://api.bilibili.com/x/relation/tag/create"
+        data = {
+            "tag": name,
+            "jsonp": "jsonp",
+            "csrf": "e2aef52ac3ba10aeb2efb4e37336b31c"
+        }
+        ...
+
+
+    def delGroup(self, tagid:int):
+        url = "https://api.bilibili.com/x/relation/tag/del"
+        data = {
+            "tagid": tagid,
+            "jsonp": "jsonp",
+            "csrf": "e2aef52ac3ba10aeb2efb4e37336b31c"
+        }
+        ...
+
+
+    def changeGroup(self, tagid:int, name:str):
+        url = "https://api.bilibili.com/x/relation/tag/update"
+        data = {
+            "tagid": tagid,
+            "name": name,
+            "jsonp": "jsonp",
+            "csrf": "e2aef52ac3ba10aeb2efb4e37336b31c"
+        }
+        ...
+
+
 # todo:
-#   关注分组列表获取 name, id
 #   增删改查 关注分组
 #   check 关注分组
 
@@ -71,5 +157,8 @@ class BiliFolist(UtilAcount):
 if __name__ == "__main__":
     b = BiliFolist('../cookies.json')
     b.verifyCookie()
-    folist = b.getFolist(pn=4)
-    b.printFolist(folist)
+    # folist = b.getFolist(pn=4)
+    # b.printFolist()
+    c = BiliFoGroup('../cookies.json')
+    #c.getGroups()
+    c.printGroup()
