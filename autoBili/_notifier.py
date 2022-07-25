@@ -2,20 +2,22 @@ from win10toast import ToastNotifier
 
 
 class BiliNotifier(ToastNotifier):
-    def showIt(self, info):
+    def showIt(self, info=None, title: str='', msg: str='', icon: str='', duration: float=0):
         '''
         PARAMETER:
-            info = {
+          @ icon: The logo of the notifier.
+          @ info = {
                 "title": str,
                 "msg": str,
                 "icon": str,
                 "duration": int, float,
             }
         '''
-        title = info['title']
-        msg = info['msg']
-        icon = info['icon']
-        duration = info['duration']
+        if info != None:
+            title = info['title']
+            msg = info['msg']
+            icon = info['icon']
+            duration = info['duration']
         self.show_toast(title, msg, icon, duration)
 
 

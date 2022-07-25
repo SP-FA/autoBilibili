@@ -125,7 +125,9 @@ class BiliFoGroup(UtilAcount):
             "jsonp": "jsonp",
             "csrf": "e2aef52ac3ba10aeb2efb4e37336b31c"
         }
-        ...
+        check = self.session.post(url, headers = self.headers, data=data).json()
+        if(check['code'] != 0):
+            raise FolistException(6, check['message'])
 
 
     def delGroup(self, tagid:int):

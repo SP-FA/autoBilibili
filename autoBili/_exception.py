@@ -44,6 +44,7 @@ class FolistException(Exception):
         0: The parameters are invalid
         1: Runtime Failures while getting follow list
         5: Runtime Failures while getting follow group
+        6: Runtime Failures while creating follow group
     '''
     def __init__(self, err, msg):
         self.errno = err

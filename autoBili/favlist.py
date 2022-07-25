@@ -3,7 +3,7 @@ import re
 from typing import *
 from _util import UtilAcount
 from _exception import FavlistException
-from _validation import _checkType, _checkIsIn
+from _validation import _checkType, _checkNumIsIn
 
 
 class BiliFavlist(UtilAcount):
@@ -94,7 +94,7 @@ class BiliFavlist(UtilAcount):
         _checkType(name, str)
         _checkType(intro, str)
         _checkType(cover, str)
-        _checkIsIn(intro, str, "intro", [0, 1])
+        _checkNumIsIn(intro, str, "intro", [0, 1])
         if name == "":
             raise FavlistException(0, 'A folder name is needed.')
         if privacy != 0 and privacy != 1:
