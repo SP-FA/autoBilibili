@@ -26,10 +26,6 @@ class BiliFolist(UtilAcount):
         RETURN:
           a list with each element is a dict contains the info
           of the followed up.
-
-        EXCEPTION:
-          FolistException:
-            @ errno 1: Runtime Failures while getting follow list
         '''
         self.folist = []
         for i in range(1, pn+1):
@@ -83,11 +79,10 @@ class BiliFoGroup(UtilAcount):
 
     def getGroups(self) -> List[Dict]:
         '''
+        Get all follow groups.
+
         RETURN:
           a list of json data, which include the info of the follow groups
-
-        EXCEPTION:
-          @ errno 5: Runtime Failures while getting follow group
         '''
         url = "https://api.bilibili.com/x/relation/tags" # ?jsonp=jsonp&callback=__jp3
         check = self.session.get(url, headers=self.headers).json()
@@ -100,7 +95,7 @@ class BiliFoGroup(UtilAcount):
     def printGroup(self, glst:List[Dict]=None):
         '''
         print the groups of followed ups. If the parameter glst is None,
-        this method will use self.glst. if self.glst is None, it will
+        this method will use self.glst. if self.glst is not None, it will
         call self.getGroups()
 
         PARAMETER:
@@ -130,14 +125,32 @@ class BiliFoGroup(UtilAcount):
             raise FolistException(6, check['message'])
 
 
+    def checkGroup(self, tagid: int):
+        _checkType(tagid, int)
+        groupList = self.getGroups()
+        for i in groupList:
+            if i['tagid'] == tagid:
+                return
+        raise FolistException(7, "Can not find the follow group")
+
+
     def delGroup(self, tagid:int):
+        """
+        Delete a follow group.
+
+        PARAMETER:
+          @ tagid: An id of follow group, which you want to delete.
+        """
+        self.checkGroup(tagid)
         url = "https://api.bilibili.com/x/relation/tag/del"
         data = {
             "tagid": tagid,
             "jsonp": "jsonp",
             "csrf": "e2aef52ac3ba10aeb2efb4e37336b31c"
         }
-        ...
+        check = self.session.post(url, headers=self.headers, data=data).json()
+        if check['code'] != 0:
+            raise FolistException(2, check['message'])
 
 
     def changeGroup(self, tagid:int, name:str):
@@ -152,7 +165,7 @@ class BiliFoGroup(UtilAcount):
 
 
 # todo:
-#   增删改查 关注分组
+#   改 关注分组
 #   check 关注分组
 
 

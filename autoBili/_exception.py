@@ -43,6 +43,8 @@ class FolistException(Exception):
       @ errno: The error code
         0: The parameters are invalid
         1: Runtime Failures while getting follow list
+        2: Runtime Failures while deleting follow group
+        4: Can not find the follow group
         5: Runtime Failures while getting follow group
         6: Runtime Failures while creating follow group
     '''

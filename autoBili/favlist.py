@@ -22,10 +22,6 @@ class BiliFavlist(UtilAcount):
 
         RETURN:
           a list of json data, which include the info of the favorite list
-
-        EXCEPTION:
-          FavlistException:
-          @ errno 3: Runtime Failures while getting folders
         '''
         url = r'https://api.bilibili.com/x/v3/fav/folder/created/list-all?up_mid=' + self.uid
         check = self.session.get(url, headers=self.headers).json()
@@ -63,10 +59,6 @@ class BiliFavlist(UtilAcount):
 
         PARAMETER:
           @ mediaId: the folder id
-
-        EXCEPTION:
-          FavlistException:
-          @ errno 4: Can not find the folder
         '''
         _checkType(mediaId, int)
         mediaList = self.getFavlist()
@@ -85,11 +77,6 @@ class BiliFavlist(UtilAcount):
           @ intro: folder introduction
           @ privacy: 0 public, 1 private
           @ cover: cover image link
-
-        EXCEPTION:
-          FavlistException:
-          @ errno 0: The parameters are invalid
-          @ errno 1: Runtime Failures while creating folder
         '''
         _checkType(name, str)
         _checkType(intro, str)
@@ -118,14 +105,7 @@ class BiliFavlist(UtilAcount):
 
         PARAMETER:
           @ mediaId: The id of the folder
-
-        EXCEPTION:
-          FavlistException:
-          @ errno 0: The parameters are invalid
-          @ errno 2: Runtime Failures while deleting folder
-          @ errno 4: Can not find the folder
         '''
-        _checkType(mediaId, int)
         self.checkFolder(mediaId)
         url = r'https://api.bilibili.com/x/v3/fav/folder/del'
         data = {
@@ -136,7 +116,7 @@ class BiliFavlist(UtilAcount):
         }
         check = self.session.post(url, headers=self.headers, data=data).json()
         if check['code'] != 0:
-            raise FavlistException(3, check['message'])
+            raise FavlistException(2, check['message'])
 
 
     def changeFolder(self, mediaId:int, title:str=None, intro:str=None, cover:str=None):
@@ -148,11 +128,6 @@ class BiliFavlist(UtilAcount):
           @ title: the new folder title.
           @ intro: the new intro of the folder.
           @ cover: the new cover.
-
-        EXCEPTION:
-          @ errno 4: Can not find the folder
-          @ errno 5: Runtime Failures while getting the info of the folder
-          @ errno 6: Runtime Failures while changing the info of folder
         '''
         _checkType(mediaId, int)
         _checkType(title, str)
@@ -182,11 +157,6 @@ class BiliFavlist(UtilAcount):
 
         RETURN:
           a json contains the info
-
-        EXCEPTION:
-          FavlistException:
-          @ errno 4: Can not find the folder
-          @ errno 5: Runtime Failures while getting the info of the folder
         '''
         _checkType(mediaId, int)
         self.checkFolder(mediaId)    
@@ -210,11 +180,6 @@ class BiliFavlist(UtilAcount):
         PARAMETER:
           @ mediaId: the folder id you want to move.
           @ index: the index you want to move to.
-
-        EXCEPTION:
-          FavlistException:
-          @ errno 4: Can not find the folder
-          @ errno 7: Runtime Failures while moving folders
         '''
         _checkType(mediaId, int)
         self.checkFolder(mediaId)
