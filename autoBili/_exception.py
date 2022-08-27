@@ -47,6 +47,8 @@ class FolistException(Exception):
         4: Can not find the follow group
         5: Runtime Failures while getting follow group
         6: Runtime Failures while creating follow group
+        7: Can not find the follow group
+        8: Runtime Failures while changing follow group
     '''
     def __init__(self, err, msg):
         self.errno = err

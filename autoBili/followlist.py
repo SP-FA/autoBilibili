@@ -16,8 +16,6 @@ class BiliFolist(UtilAcount):
 
     def getFolist(self, tagid:int=None, pn:int=10, ps:int=50) -> List[Dict]:
         '''
-        Get the follow list.
-
         PARAMETER:
           @ tagid: the id of follow group, None represent for all followed up.
           @ ps: the number of followed ups for each page.
@@ -27,6 +25,9 @@ class BiliFolist(UtilAcount):
           a list with each element is a dict contains the info
           of the followed up.
         '''
+        _checkType(pn, int)
+        _checkType(ps, int)
+        _checkType(tagid, int)
         self.folist = []
         for i in range(1, pn+1):
             if tagid == None:
@@ -136,11 +137,10 @@ class BiliFoGroup(UtilAcount):
 
     def delGroup(self, tagid:int):
         """
-        Delete a follow group.
-
         PARAMETER:
           @ tagid: An id of follow group, which you want to delete.
         """
+        _checkType(tagid, int)
         self.checkGroup(tagid)
         url = "https://api.bilibili.com/x/relation/tag/del"
         data = {
@@ -154,6 +154,8 @@ class BiliFoGroup(UtilAcount):
 
 
     def changeGroup(self, tagid:int, name:str):
+        _checkType(tagid, int)
+        self.checkGroup(tagid)
         url = "https://api.bilibili.com/x/relation/tag/update"
         data = {
             "tagid": tagid,
@@ -161,12 +163,9 @@ class BiliFoGroup(UtilAcount):
             "jsonp": "jsonp",
             "csrf": "e2aef52ac3ba10aeb2efb4e37336b31c"
         }
-        ...
-
-
-# todo:
-#   改 关注分组
-#   check 关注分组
+        check = self.session.post(url, headers=self.headers, data=data).json()
+        if check['code'] != 0:
+            raise FolistException(8, check['message'])
 
 
 if __name__ == "__main__":
