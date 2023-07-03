@@ -30,7 +30,6 @@ bili = BiliFavlist("config_path")
 bili.verify_cookie()
 ```
 如果配置完善，则程序会打印 "Valid Cookie, user name: + 用户名"
-
 # 文档
 
 ## 1. 收藏夹
